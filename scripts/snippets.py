@@ -115,11 +115,13 @@ def snippet_01(fs=[12,8]):
     y =  16 - (x - 6.5)**2 + np.random.normal(0, 1, N)
     x_curve = np.linspace(0,10,50)
     y_curve = [None]
+    y_pred = [None]
 
     # Linear Model
     m1 = LinearRegression()
     m1.fit(x.reshape(N,1),y)
     y_curve.append(m1.predict(x_curve.reshape(50,1)))
+    y_pred.append(m1.predict(x.reshape(N,1)))
 
     # Quadratic Model
     pt = PolynomialFeatures(2)
@@ -127,6 +129,7 @@ def snippet_01(fs=[12,8]):
     m2 = LinearRegression()
     m2.fit(Xpoly,y)
     y_curve.append(m2.predict(pt.transform(x_curve.reshape(50,1))))
+    y_pred.append(m2.predict(Xpoly))
 
     # Degree 10 Model
     pt = PolynomialFeatures(10)
@@ -134,6 +137,7 @@ def snippet_01(fs=[12,8]):
     m3 = LinearRegression()
     m3.fit(Xpoly,y)
     y_curve.append(m3.predict(pt.transform(x_curve.reshape(50,1))))
+    y_pred.append(m3.predict(Xpoly))
 
     # Piecewise Linear
     b = [6,-9,4.5,-3]
@@ -152,15 +156,19 @@ def snippet_01(fs=[12,8]):
     min_results = minimize(sse, b)
     b_opt = min_results.x
     y_curve.append(pred(b_opt, x_curve))
+    y_pred.append(pred(b_opt, x))
             
     # KNN Model
     m5 = KNeighborsRegressor(3)
     m5.fit(x.reshape(N,1),y)
     y_curve.append(m5.predict(x_curve.reshape(50,1)))
+    y_pred.append(m5.predict(x.reshape(N,1)))
 
     # Plot
     titles = ['Original Data', 'Model 1: Linear Regression', 'Model 2: Quadratic Model',
               'Model 3: Degree 10 Poly', 'Model 4: PW-Linear Regression', 'Model 5: 3-Nearest Neighbors']
+    
+    mse = [np.mean((pred - y)**2).round(4) if pred is not None else None for pred in y_pred]
     
     x0, x1, y0, y1 = 0, 10, 0, 20
     
@@ -173,7 +181,8 @@ def snippet_01(fs=[12,8]):
         plt.scatter(x, y, zorder=2)
         plt.xlim(x0,x1)
         plt.ylim(y0,y1)
-        plt.title(titles[i])
+        title = titles[i] + ('' if i == 0 else f'\nMSE = {mse[i]}')
+        plt.title(title)
     plt.tight_layout()
     plt.show()
 
