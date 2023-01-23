@@ -6,6 +6,9 @@ from matplotlib.colors import ListedColormap
 from scipy.optimize import minimize
 import warnings 
 
+from ipywidgets import *
+from IPython.display import display, HTML, Markdown
+
 from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.neighbors import KNeighborsRegressor, KNeighborsClassifier
@@ -314,3 +317,61 @@ def snippet_03(fs=[9,9]):
     plt.title('K-Means (K = 5)')
 
     plt.show()
+
+def snippet_04():
+    np.random.seed(164)
+    N = 12
+    x = np.random.uniform(low=0,high=10,size=N)
+    x.sort()
+    y = 5 + 1.4 * x + np.random.normal(0, 2.5, N)
+
+    def regression_example(b, m, show_errors):
+        yhat = b + m * x
+        
+        plt.figure(figsize=[5.5, 5.5])
+        plt.plot([0,10], [b,10*m+b], c='purple')
+        if show_errors:
+            for i in range(len(x)):
+                plt.plot([x[i],x[i]],[y[i],yhat[i]],c='black', lw=0.75,zorder=1)
+        plt.scatter(x,y,zorder=2)        
+        plt.axis((0,10,0,25))
+        plt.show()
+
+
+    def sse(b, m, **kwargs):
+        yhat = b + m * x 
+        errors = y - yhat
+        sq_errors = errors**2
+        SSE = np.sum(sq_errors)
+        print('')
+        sp1 = "**<span style=\"font-size:1.4em;\">"
+        sp2 = "</span>**"
+        display(Markdown(sp1 + "Loss Function:" + sp2))
+        display(Markdown(sp1 + "SSE = " + str(round(SSE,2)) + sp2))
+
+    def table(b, m, **kwargs):   
+        yhat = b + m * x 
+        errors = y - yhat
+        sq_errors = errors**2
+        
+        df = pd.DataFrame({
+            'x':x, 'y':y, 'yhat':yhat, 'error':errors, 'sq_error':sq_errors
+        }).round(3)
+
+        display(df)
+
+    b = FloatSlider(min=-2, max=10, step=0.1, value=2, 
+                continuous_update=False, layout=Layout(width='200px'))
+    m = FloatSlider(min=-2, max=2, step=0.01, value=0, 
+                    continuous_update=False, layout=Layout(width='200px'))
+    e = Checkbox(value=False, description='Show Errors', disable=False)
+
+    cdict = {'b':b, 'm':m, 'show_errors':e}
+
+    plot_out = interactive_output(regression_example, cdict)
+    sse_out = interactive_output(sse, cdict)
+    table_out = interactive_output(table, cdict)
+
+    controls = VBox([b, m, e, sse_out])
+
+    display(HBox([controls, plot_out, table_out]))
