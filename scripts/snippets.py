@@ -318,7 +318,49 @@ def snippet_03(fs=[9,9]):
 
     plt.show()
 
-def snippet_04():
+def data_for_456(N, sd):
+    np.random.seed(sd)
+    x = np.random.uniform(low=0, high=10, size=N).round(1)
+    x.sort()
+    y = (5 + 1.4 * x + np.random.normal(0, 2.5, N)).round(1)
+    return x, y
+
+
+def snippet_04(fs=[8,4]):
+    x, y = data_for_456(12, 164)
+    df = pd.DataFrame({'x':x, 'y':y}).T
+    display(df)
+
+    plt.figure(figsize=fs)
+    plt.scatter(x, y, c='orchid', edgecolor='k', s=60, alpha=0.8)
+    plt.axis((0,10,0,25))
+    plt.show()
+
+def snippet_05(fs=[6,6]):
+    x, y = data_for_456(12, 164)
+    
+    grid_b0 = np.arange(-2.1, 12.1, 0.01)
+    grid_b1 = np.arange(-1.1, 4.1, 0.01)
+    [B0, B1] = np.meshgrid(grid_b0, grid_b1)
+    
+    yhat = B0.flatten() + x.reshape(-1,1) * B1.reshape(1,-1)
+    errors = y.reshape(-1,1) - yhat
+    sq_error = errors**2
+    sse = sq_error.sum(axis=0)
+    sse = sse.reshape(len(grid_b1),len(grid_b0))
+
+    levels = [0, 50, 100, 500, 1000, 2000, 4000, 5000]
+    plt.figure(figsize=fs)
+    plt.contourf(B0, B1, sse, levels=levels, cmap='Spectral_r')
+    plt.contour(B0, B1, sse, levels=levels, colors='k', linewidths=1)
+    plt.title('Countour Map for SSE')
+    plt.xlabel('B0')
+    plt.ylabel('B1')
+    plt.show()
+
+
+
+def snippet_06():
     np.random.seed(164)
     N = 12
     x = np.random.uniform(low=0,high=10,size=N)
@@ -332,7 +374,7 @@ def snippet_04():
         plt.plot([0,10], [b,10*m+b], c='purple')
         if show_errors:
             for i in range(len(x)):
-                plt.plot([x[i],x[i]],[y[i],yhat[i]],c='black', lw=0.75,zorder=1)
+                plt.plot([x[i],x[i]],[y[i],yhat[i]], c='black', lw=0.75,zorder=1)
         plt.scatter(x,y,zorder=2)        
         plt.axis((0,10,0,25))
         plt.show()
