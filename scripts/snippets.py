@@ -3,6 +3,8 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.colors as mplc
 from matplotlib.colors import ListedColormap
+from matplotlib.colors import LinearSegmentedColormap
+
 from scipy.optimize import minimize
 import warnings 
 
@@ -17,9 +19,8 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.cluster import KMeans
 from sklearn.datasets import make_blobs
 
-def plot_regions(model, X, y, num_ticks=100, cmap='rainbow', 
-                 fig_size=None, legend=True, close=True, 
-                 display=True, path=None, keras=False):
+def plot_regions(model, X, y, num_ticks=100, cmap='rainbow', colors=None, fig_size=None, legend=True, 
+                 close=True, display=True, path=None, keras=False):
 
     # Convert X to numpy array
     X = np.array(X)
@@ -70,8 +71,11 @@ def plot_regions(model, X, y, num_ticks=100, cmap='rainbow',
     # reshape classification array into 2D array corresponding to grid
     class_grid = class_pts_2.reshape(len(xticks),len(yticks) )
     
-    # Set a color map        
-    my_cmap = plt.get_cmap(cmap)
+    # Set a color map
+    if colors is None:        
+        my_cmap = plt.get_cmap(cmap)
+    else:
+        my_cmap = LinearSegmentedColormap.from_list('my_cmap', colors)
           
     # Close any open figures and set plot size.
     
