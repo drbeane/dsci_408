@@ -354,8 +354,8 @@ def snippet_05(fs=[6,6]):
     plt.contourf(B0, B1, sse, levels=levels, cmap='Spectral_r')
     plt.contour(B0, B1, sse, levels=levels, colors='k', linewidths=1)
     plt.title('Countour Map for SSE')
-    plt.xlabel('B0')
-    plt.ylabel('B1')
+    plt.xlabel('Beta_0')
+    plt.ylabel('Beta_1')
     plt.show()
 
 
@@ -417,3 +417,56 @@ def snippet_06():
     controls = VBox([b, m, e, sse_out])
 
     display(HBox([controls, plot_out, table_out]))
+    
+    
+def snippet_07(b, fs=[6,4]):
+    exam_df = pd.DataFrame({
+        'x1': [50, 55, 70, 95, 100, 120], 
+        'x2': [0, 8, 18, 6, 0, 12],
+        'y' : ['F', 'F', 'P', 'F', 'P', 'P']
+    })
+    passed = exam_df.query('y == "P"')
+    failed = exam_df.query('y == "F"')
+
+    k = -b[0] / b[2]   # intercept
+    m = -b[1] / b[2]   # slope
+    
+    plt.figure(figsize=fs)
+    plt.scatter(passed.x1, passed.x2, s=120, c='cornflowerblue', edgecolors='k', label='Passed', zorder=2)
+    plt.scatter(failed.x1, failed.x2, s=120, c='salmon', edgecolors='k', label='Failed', zorder=2)
+    plt.fill([0,200,200,0],[-10,-10, k + m*200, k],'salmon',alpha=0.2, zorder=1)
+    plt.fill([0,200,200,0],[30,30, k + m*200, k],'steelblue',alpha=0.2, zorder=1)
+    plt.plot([0,200],[k, k + 200*m], c='k', alpha=0.6, zorder=2)
+    plt.xlabel('Hours Spent Studying Alone')
+    plt.ylabel('Hours Spent in Seminar')
+    plt.xlim([40,130])
+    plt.ylim([-2,22])
+    plt.show()
+    
+def snippet_08(n, b):
+    def show_table(b):
+        df = pd.DataFrame({
+            'x1': [50, 55, 70, 95, 100, 120], 
+            'x2': [0, 8, 18, 6, 0, 12],
+            'y' : ['F', 'F', 'P', 'F', 'P', 'P'],
+        })
+        z = b[0] + b[1] * df.x1.values + b[2] * df.x2.values
+        p = 1 / (1 + np.exp(-z))
+        df['p'] = p.round(3)
+        df['pi'] = np.where(df.y == 'P', p, 1 - p).round(3)
+        lik = np.product(df.pi.values)
+
+        display(df)        
+        display(Markdown(f'**Likelihood = {100*lik:.2f}%**'))
+        display(Markdown(f'**NLL = {-np.log(lik):.2f}**'))
+
+    def blank():
+        display(Markdown("<html>&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp</html>"))
+
+    cdict = {}
+    plot_1 = interactive_output(lambda : snippet_07(b), cdict)
+    table_1 = interactive_output(lambda : show_table(b), cdict)
+    blank_1 = interactive_output(blank, cdict)
+    display(Markdown(f"##Model {n}"))
+    display(HBox([plot_1, blank_1, table_1]))
+ 
