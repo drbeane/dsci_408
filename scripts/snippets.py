@@ -359,7 +359,6 @@ def snippet_05(fs=[6,6]):
     plt.show()
 
 
-
 def snippet_06():
     np.random.seed(164)
     N = 12
@@ -430,12 +429,21 @@ def snippet_07(b, fs=[6,4]):
 
     k = -b[0] / b[2]   # intercept
     m = -b[1] / b[2]   # slope
+    if b[2] > 0: 
+        c_bot = 'salmon'
+        c_top = 'steelblue'
+    else:
+        c_bot = 'steelblue'
+        c_top = 'salmon'
     
     plt.figure(figsize=fs)
     plt.scatter(passed.x1, passed.x2, s=120, c='cornflowerblue', edgecolors='k', label='Passed', zorder=2)
     plt.scatter(failed.x1, failed.x2, s=120, c='salmon', edgecolors='k', label='Failed', zorder=2)
-    plt.fill([0,200,200,0],[-10,-10, k + m*200, k],'salmon',alpha=0.2, zorder=1)
-    plt.fill([0,200,200,0],[30,30, k + m*200, k],'steelblue',alpha=0.2, zorder=1)
+    
+    
+    plt.fill([0,200,200,0],[-10,-10, k + m*200, k], c_bot, alpha=0.2, zorder=1)    # below line
+    plt.fill([0,200,200,0],[30,30, k + m*200, k], c_top, alpha=0.2, zorder=1)   # above line
+    
     plt.plot([0,200],[k, k + 200*m], c='k', alpha=0.6, zorder=2)
     plt.xlabel('Hours Spent Studying Alone')
     plt.ylabel('Hours Spent in Seminar')
