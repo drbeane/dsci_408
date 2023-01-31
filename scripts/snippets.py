@@ -443,7 +443,7 @@ def snippet_07(b, fs=[6,4]):
     plt.ylim([-2,22])
     plt.show()
     
-def snippet_08(n, b):
+def snippet_08(title, b):
     def show_table(b):
         df = pd.DataFrame({
             'x1': [50, 55, 70, 95, 100, 120], 
@@ -467,6 +467,6 @@ def snippet_08(n, b):
     plot_1 = interactive_output(lambda : snippet_07(b), cdict)
     table_1 = interactive_output(lambda : show_table(b), cdict)
     blank_1 = interactive_output(blank, cdict)
-    display(Markdown(f"##Model {n}"))
+    display(Markdown(f"##{title}"))
     display(HBox([plot_1, blank_1, table_1]))
  
