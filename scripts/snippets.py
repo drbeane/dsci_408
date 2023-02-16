@@ -499,6 +499,8 @@ def snippet_09():
     for i in range(N): 
         plt.text(X[i,0]-0.1, 1.2, X[i,0])
         plt.text(X[i,0]-0.1, -0.4, Xs_mm[i,0].round(2))
+    plt.text(-1.8, 1.1, 'Original values:')
+    plt.text(-1.8, -0.3, 'Scaled values:')
     plt.vlines(X[:,0], 0, 1, color='gray', zorder=1)
     plt.axis('off')
     plt.show()
@@ -518,6 +520,8 @@ def snippet_10():
     for i in range(N): 
         plt.text(X[i,0]-0.1, 1.2, X[i,0])
         plt.text(X[i,0]-0.1, -0.4, Xs_std[i,0].round(2))
+    plt.text(-1.8, 1.1, 'Original values:')
+    plt.text(-1.8, -0.3, 'Scaled values:')
     plt.vlines(X[:,0], 0, 1, color='gray', zorder=1)
     plt.axis('off')
     plt.show()
