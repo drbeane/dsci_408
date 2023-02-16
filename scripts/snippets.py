@@ -13,6 +13,7 @@ from IPython.display import display, HTML, Markdown
 
 from sklearn.linear_model import LinearRegression, LogisticRegression
 from sklearn.preprocessing import PolynomialFeatures
+from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from sklearn.neighbors import KNeighborsRegressor, KNeighborsClassifier
 from sklearn.svm import SVC
 from sklearn.tree import DecisionTreeClassifier
@@ -482,3 +483,43 @@ def snippet_08(title, b):
     display(Markdown(f"##{title}"))
     display(HBox([plot_1, blank_1, table_1]))
  
+ 
+def snippet_09():
+    N = 6
+    np.random.seed(7)
+    X = np.hstack([
+        np.random.uniform(0, 10, size=(N,1)).round(1),
+        np.random.uniform(0, 100, size=(N,1)).round(1),
+    ])
+    mm_scaler = MinMaxScaler()
+    Xs_mm = mm_scaler.fit_transform(X)
+    print(Xs_mm.round(2))
+    plt.figure(figsize=[8,1])
+    plt.scatter(X[:,0], np.ones(N), zorder=2)
+    plt.scatter(X[:,0], np.zeros(N), zorder=2)
+    for i in range(N): 
+        plt.text(X[i,0]-0.1, 1.2, X[i,0])
+        plt.text(X[i,0]-0.1, -0.4, Xs_mm[i,0].round(2))
+    plt.vlines(X[:,0], 0, 1, color='gray', zorder=1)
+    plt.axis('off')
+    plt.show()
+    
+def snippet_10():
+    N = 6
+    np.random.seed(7)
+    X = np.hstack([
+        np.random.uniform(0, 10, size=(N,1)).round(1),
+        np.random.uniform(0, 100, size=(N,1)).round(1),
+    ])
+    std_scaler = StandardScaler()
+    Xs_std = std_scaler.fit_transform(X)
+    print(Xs_std.round(2))
+    plt.figure(figsize=[8,1])
+    plt.scatter(X[:,0], np.ones(N), zorder=2)
+    plt.scatter(X[:,0], np.zeros(N), zorder=2)
+    for i in range(N): 
+        plt.text(X[i,0]-0.1, 1.2, X[i,0])
+        plt.text(X[i,0]-0.1, -0.4, Xs_std[i,0].round(2))
+    plt.vlines(X[:,0], 0, 1, color='gray', zorder=1)
+    plt.axis('off')
+    plt.show()
