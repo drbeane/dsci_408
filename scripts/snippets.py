@@ -525,3 +525,19 @@ def snippet_10():
     plt.vlines(X[:,0], 0, 1, color='gray', zorder=1)
     plt.axis('off')
     plt.show()
+    
+def snippet_11(X, y, fs=[12,8], num_ticks=200):
+    import ipywidgets as widgets
+    def show_plot(max_depth, min_samples_leaf):
+        temp_mod = DecisionTreeClassifier(max_depth=max_depth, min_samples_leaf=min_samples_leaf, random_state=1)
+        temp_mod.fit(X, y)
+        print('Training Accuracy:', temp_mod.score(X, y))
+        plot_regions(temp_mod, X, y, fig_size=fs, num_ticks=num_ticks, colors=['salmon', 'cornflowerblue'])
+        
+
+    _ = widgets.interact(
+        show_plot,
+        max_depth = widgets.IntSlider(min=1,max=30,step=1,value=1,continuous_update=False),
+        min_samples_leaf = widgets.IntSlider(min=1,max=30,step=1,value=1,continuous_update=False)
+        
+    )
