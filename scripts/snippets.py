@@ -20,8 +20,13 @@ from sklearn.tree import DecisionTreeClassifier
 from sklearn.cluster import KMeans
 from sklearn.datasets import make_blobs
 
-def plot_regions(model, X, y, num_ticks=100, cmap='rainbow', colors=None, fig_size=None, legend=True, 
-                 close=True, display=True, path=None, keras=False):
+
+def plot_regions(
+    model, X, y, num_ticks=100, cmap='rainbow', colors=None, fig_size=None, legend=True, 
+    display=True, path=None, keras=False):
+
+    import matplotlib.colors as mplc
+    from matplotlib.colors import LinearSegmentedColormap
 
     # Convert X to numpy array
     X = np.array(X)
@@ -80,8 +85,8 @@ def plot_regions(model, X, y, num_ticks=100, cmap='rainbow', colors=None, fig_si
           
     # Close any open figures and set plot size.
     
-    if(close): 
-        plt.close()
+    #if(close): 
+    #    plt.close()
     if(not fig_size is None):
         plt.figure(figsize=fig_size)
     
@@ -101,7 +106,10 @@ def plot_regions(model, X, y, num_ticks=100, cmap='rainbow', colors=None, fig_si
         
         my_c = mplc.rgb2hex(my_cmap(cuts[i]))
         plt.scatter(X[sel,0],X[sel,1], c=my_c, edgecolor='k', 
-                    zorder=3, label=classes[i])
+                    zorder=10, label=classes[i])
+
+    plt.xlim([x0, x1])
+    plt.ylim([y0, y1])
 
     if(legend):
         plt.legend()
@@ -111,6 +119,7 @@ def plot_regions(model, X, y, num_ticks=100, cmap='rainbow', colors=None, fig_si
 
     if(display): 
         plt.show()
+
 
 def snippet_01(fs=[12,8]):
     # Generate Data 
@@ -541,3 +550,110 @@ def snippet_11(X, y, fs=[12,8], num_ticks=200):
         min_samples_leaf = widgets.IntSlider(min=1,max=30,step=1,value=1,continuous_update=False)
         
     )
+
+
+def snippet_12(mod, X, y, colors, sz=300, fig_size=None, num_ticks=100, display=False, show_support=True):
+    plot_regions(mod, X, y, colors=colors, fig_size=fig_size, num_ticks=num_ticks, display=display)
+    
+    if show_support:
+        plt.scatter(
+            mod.support_vectors_[:, 0], mod.support_vectors_[:, 1], s=sz, 
+            linewidth=1, edgecolors='k', zorder=10, facecolors='none'
+        )
+    xticks = np.linspace(np.min(X[:,0])-1/2, np.max(X[:,0])+1/2, 100)
+    yticks = np.linspace(np.min(X[:,1])-1/2, np.max(X[:,1])+1/2, 100)
+    grid_pts = np.transpose([np.tile(xticks,100), np.repeat(yticks,100)])
+    P = mod.decision_function(grid_pts).reshape(100,100)
+    plt.contour(xticks, yticks, P, colors='k', levels=[-1,0,1], linestyles = ['--', '-', '--'], zorder = 4)
+    if display: plt.display()
+
+
+def snippet_13(X, y, colors=None, fig_size=[8,6], param_range=None, log=True, show_slider=True):
+    import ipywidgets as wid
+
+    if param_range is None:
+        c0, c1, step, start = -10, 20, 1, 20
+    else:
+        c0, c1, step, start = param_range
+
+    label = 'log C' if log else 'C'
+
+    slider = wid.FloatSlider(
+        min=c0, max=c1, step=step, value=start, description=label, 
+        continuous_update=False, layout=wid.Layout(width='275px')
+    )
+
+    colors = ['salmon', 'cornflowerblue'] if colors is None else colors
+    def svm_plot_1(slider_value):
+        
+        C = np.exp(slider_value) if log else slider_value
+        # build model
+        mod_01 = SVC(kernel='linear', C=C, )
+        mod_01.fit(X, y)
+        
+        # plot decision regions
+        
+        plot_regions(mod_01, X, y, 200, colors=colors, fig_size=fig_size, display=False)
+        
+        # plot support vectors
+        plt.scatter(mod_01.support_vectors_[:, 0], mod_01.support_vectors_[:, 1], s=300, 
+                    linewidth=1, edgecolors='k', zorder=4, facecolors='none')
+        
+        xticks = np.linspace(np.min(X[:,0])-1/2, np.max(X[:,0])+1/2, 100)
+        yticks = np.linspace(np.min(X[:,1])-1/2, np.max(X[:,1])+1/2, 100)
+        grid_pts = np.transpose([np.tile(xticks,100), np.repeat(yticks,100)])
+        
+        P = mod_01.decision_function(grid_pts).reshape(100,100)
+        
+        plt.contour(xticks, yticks, P, colors='k', levels=[-1,0,1], linestyles = ['--', '-', '--'], zorder = 4)
+        plt.show()
+
+    cdict = {'slider_value':slider}
+    plot_out = wid.interactive_output(svm_plot_1, cdict)
+
+    if show_slider:
+        display(wid.VBox([slider, plot_out]))
+    else:
+        display(plot_out)
+
+
+def snippet_14(X, y, colors=None):
+    import ipywidgets as wid
+    
+    D = wid.IntSlider(min=1, max=10, step=1, value=1, description = 'Degree', 
+                        continuous_update=False, layout=wid.Layout(width='275px'))
+    logC = wid.IntSlider(min=-10, max=10, step=1, value=10, description = 'log C', 
+                        continuous_update=False, layout=wid.Layout(width='275px'))
+
+
+    s1 = wid.Checkbox(value=False, description='Show Margins', disable=False)
+    s2 = wid.Checkbox(value=False, description='Show Support', disable=False)
+
+    colors = ['salmon', 'cornflowerblue'] if colors is None else colors
+    def svm_plot_2(D, logC, s1, s2):
+        C = np.exp(logC)
+        model = SVC(C=C, kernel='poly', degree=D, gamma='auto')
+        model.fit(X, y)
+                
+        plot_regions(model, X, y, 200, display=False, fig_size=[8,6], colors=colors)
+        
+        if(s2):
+            plt.scatter(model.support_vectors_[:, 0], model.support_vectors_[:, 1], s=300,  
+                        linewidth=1, edgecolors='k', zorder=4, facecolors='none')
+        
+        if(s1):
+            xticks = np.linspace(np.min(X[:,0])-0.5, np.max(X[:,0])+0.5, 100)
+            yticks = np.linspace(np.min(X[:,1])-0.5, np.max(X[:,1])+0.5, 100)
+            grid_pts = np.transpose([np.tile(xticks,100), np.repeat(yticks,100)])
+            P = model.decision_function(grid_pts).reshape(100,100)
+            plt.contour(xticks, yticks, P, colors='k', levels=[-1,0,1], 
+                        linestyles = ['--', '-', '--'], zorder = 4)
+            
+        plt.show()
+
+
+    cdict = {'D':D, 'logC':logC, 's1':s1, 's2':s2}
+    plot_out = wid.interactive_output(svm_plot_2, cdict)
+    ui = wid.VBox([D, logC, s1, s2])
+    display(wid.HBox([ui, plot_out]))
+
