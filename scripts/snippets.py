@@ -552,7 +552,7 @@ def snippet_11(X, y, fs=[12,8], num_ticks=200):
     )
 
 
-def snippet_12(mod, X, y, colors, sz=300, fig_size=None, num_ticks=100, display=False, show_support=True):
+def snippet_12(mod, X, y, colors, sz=300, fig_size=None, num_ticks=100, display=False, show_support=True, show_margins=False):
     plot_regions(mod, X, y, colors=colors, fig_size=fig_size, num_ticks=num_ticks, display=display)
     
     if show_support:
@@ -563,8 +563,10 @@ def snippet_12(mod, X, y, colors, sz=300, fig_size=None, num_ticks=100, display=
     xticks = np.linspace(np.min(X[:,0])-1/2, np.max(X[:,0])+1/2, 100)
     yticks = np.linspace(np.min(X[:,1])-1/2, np.max(X[:,1])+1/2, 100)
     grid_pts = np.transpose([np.tile(xticks,100), np.repeat(yticks,100)])
-    P = mod.decision_function(grid_pts).reshape(100,100)
-    plt.contour(xticks, yticks, P, colors='k', levels=[-1,0,1], linestyles = ['--', '-', '--'], zorder = 4)
+    
+    if show_margins:
+        P = mod.decision_function(grid_pts).reshape(100,100)
+        plt.contour(xticks, yticks, P, colors='k', levels=[-1,0,1], linestyles = ['--', '-', '--'], zorder = 4)
     if display: plt.display()
 
 
@@ -632,7 +634,7 @@ def snippet_14(X, y, colors=None):
     colors = ['salmon', 'cornflowerblue'] if colors is None else colors
     def svm_plot_2(D, logC, s1, s2):
         C = np.exp(logC)
-        model = SVC(C=C, kernel='poly', degree=D, gamma='auto')
+        model = SVC(C=C, kernel='poly', degree=D)
         model.fit(X, y)
                 
         plot_regions(model, X, y, 200, display=False, fig_size=[8,6], colors=colors)
