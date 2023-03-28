@@ -552,7 +552,7 @@ def snippet_11(X, y, fs=[12,8], num_ticks=200):
     )
 
 
-def snippet_12(mod, X, y, colors, sz=300, fig_size=None, num_ticks=100, display=False, show_support=True, show_margins=False):
+def snippet_12(mod, X, y, colors, sz=300, fig_size=None, num_ticks=100, display=False, show_support=True, show_margins=True):
     plot_regions(mod, X, y, colors=colors, fig_size=fig_size, num_ticks=num_ticks, display=display)
     
     if show_support:
