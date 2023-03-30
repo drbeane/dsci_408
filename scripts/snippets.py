@@ -621,6 +621,7 @@ def snippet_13(X, y, colors=None, fig_size=[8,6], param_range=None, log=True, sh
 def snippet_14(fig_size=[16,6]):
     from matplotlib.colors import ListedColormap
     import ipywidgets as wid
+    from sklearn.datasets import make_circles
     
     np.random.seed(1)
 
