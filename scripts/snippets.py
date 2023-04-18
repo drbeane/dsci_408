@@ -687,7 +687,6 @@ def snippet_14(fig_size=[16,6]):
 
     display(wid.VBox([g, plot_out]))
     
-    
 def snippet_15(fs=[15,5]):
 
     import numpy as np
@@ -709,10 +708,11 @@ def snippet_15(fs=[15,5]):
     a = mu + pc[0, :]
     b = mu + pc[1, :]
 
-    c1 = 'forestgreen'
+    c0 = 'darkgray'
+    c1 = 'tab:blue'
     c2 = 'darkorange'
     c3 = 'gold'
-    c4 = 'steelblue'
+    c4 = 'forestgreen'
     c5 = 'firebrick'
 
     plt.figure(figsize=fs)
@@ -721,9 +721,9 @@ def snippet_15(fs=[15,5]):
     # Figure 1
     ###################################
     plt.subplot(1, 3, 1)
-    plt.scatter(X[:,0], X[:,1], c='grey')
-    plt.arrow(mu[0], mu[1], pc[0,0], pc[0,1], width=0.12, facecolor=c1)
-    plt.arrow(mu[0], mu[1], pc[1,0], pc[1,1], width=0.12, facecolor=c2)
+    plt.scatter(X[:,0], X[:,1], c=c0)
+    plt.arrow(mu[0], mu[1], pc[0,0], pc[0,1], width=0.12, length_includes_head=True, facecolor=c1)
+    plt.arrow(mu[0], mu[1], pc[1,0], pc[1,1], width=0.12, length_includes_head=True, facecolor=c2)
     plt.scatter(mu[0], mu[1], c=c3, edgecolor='k', s=90, marker='o')
     plt.gca().set_aspect('equal')
     plt.xlim([-4,4]); plt.ylim([-4,4])
@@ -741,9 +741,9 @@ def snippet_15(fs=[15,5]):
     q2 = p2 + Z[n2, 1] * pc[1, :]
 
     plt.subplot(1, 3, 2)
-    plt.scatter(X[:,0], X[:,1], c='grey')
-    plt.arrow(mu[0], mu[1], pc[0,0], pc[0,1], width=0.12, facecolor=c1, zorder=8)
-    plt.arrow(mu[0], mu[1], pc[1,0], pc[1,1], width=0.12, facecolor=c2, zorder=8)
+    plt.scatter(X[:,0], X[:,1], c=c0)
+    plt.arrow(mu[0], mu[1], pc[0,0], pc[0,1], width=0.12, length_includes_head=True, facecolor=c1, zorder=8)
+    plt.arrow(mu[0], mu[1], pc[1,0], pc[1,1], width=0.12, length_includes_head=True, facecolor=c2, zorder=8)
 
     plt.plot([mu[0], p1[0]], [mu[1], p1[1]], linewidth=2, color=c1, linestyle='-')
     plt.plot([mu[0], p2[0]], [mu[1], p2[1]], linewidth=2, color=c1, linestyle='-')
@@ -763,10 +763,10 @@ def snippet_15(fs=[15,5]):
     # Figure 3
     ###################################
     plt.subplot(1, 3, 3)
-    plt.scatter(Z[:,0], Z[:,1], c='grey')
+    plt.scatter(Z[:,0], Z[:,1], c=c0)
 
-    plt.arrow(0, 0, 1, 0, width=0.12, facecolor=c1, zorder=8)
-    plt.arrow(0, 0, 0, 1, width=0.12, facecolor=c2, zorder=8)
+    plt.arrow(0, 0, 1, 0, width=0.12, length_includes_head=True, facecolor=c1, zorder=8)
+    plt.arrow(0, 0, 0, 1, width=0.12, length_includes_head=True, facecolor=c2, zorder=8)
 
     plt.plot([0, Z[n1, 0]], [0, 0], linewidth=2, color=c1, linestyle='-')
     plt.plot([0, Z[n2, 0]], [0, 0], linewidth=2, color=c1, linestyle='-')
@@ -785,3 +785,32 @@ def snippet_15(fs=[15,5]):
     plt.title('Transformed Coordinates')
 
     plt.show()
+    
+def snippet_16(digit, n_frames=150):
+    from IPython.display import Image
+    import imageio
+    import os
+    import shutil
+
+    if 'frames' in os.listdir():
+        shutil.rmtree('frames/')
+    os.mkdir('frames/')
+    img = np.zeros(shape=(28, 28))
+    for i in range(n_frames):
+        pc = pca.components_[i,:]
+        step = Z[digit, i] * pc.reshape(28,28)
+        img += step
+        plt.figure(figsize=[4,4])
+        plt.imshow(img, cmap='Greys')
+        plt.axis('off')
+        plt.savefig(f'frames/frame_{i}.png', transparent=False, facecolor='white')
+        plt.close()
+
+    frames = []
+    for i in range(n_frames):
+        image = imageio.v2.imread(f'frames/frame_{i}.png')
+        frames.append(image)
+
+    imageio.mimsave('./example.gif', frames, fps = 20)       
+
+    display(Image(data=open('example.gif','rb').read(), format='png'))
