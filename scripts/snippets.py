@@ -621,7 +621,6 @@ def snippet_13(X, y, colors=None, fig_size=[8,6], param_range=None, log=True, sh
 def snippet_14(fig_size=[16,6]):
     from matplotlib.colors import ListedColormap
     import ipywidgets as wid
-    from sklearn.datasets import make_circles
     
     np.random.seed(1)
 
@@ -687,3 +686,102 @@ def snippet_14(fig_size=[16,6]):
     plot_out = wid.interactive_output(svm_plot_1, cdict)
 
     display(wid.VBox([g, plot_out]))
+    
+    
+def snippet_15(fs=[15,5]):
+
+    import numpy as np
+    from sklearn.decomposition import PCA
+
+    np.random.seed(1)
+    n = 50
+    v0 = np.random.normal(0, 1.2, [n,1])
+    v1 = np.random.normal(0, 0.6, [n,1])
+    X = np.hstack([v0 + v1, 0.8*v0 - v1])
+
+    pca = PCA(n_components=2)
+    Z = pca.fit_transform(X)
+
+    pc = pca.components_
+
+    mu = np.mean(X, axis=0)
+
+    a = mu + pc[0, :]
+    b = mu + pc[1, :]
+
+    c1 = 'forestgreen'
+    c2 = 'darkorange'
+    c3 = 'gold'
+    c4 = 'steelblue'
+    c5 = 'firebrick'
+
+    plt.figure(figsize=fs)
+
+    ###################################
+    # Figure 1
+    ###################################
+    plt.subplot(1, 3, 1)
+    plt.scatter(X[:,0], X[:,1], c='grey')
+    plt.arrow(mu[0], mu[1], pc[0,0], pc[0,1], width=0.12, facecolor=c1)
+    plt.arrow(mu[0], mu[1], pc[1,0], pc[1,1], width=0.12, facecolor=c2)
+    plt.scatter(mu[0], mu[1], c=c3, edgecolor='k', s=90, marker='o')
+    plt.gca().set_aspect('equal')
+    plt.xlim([-4,4]); plt.ylim([-4,4])
+    plt.xlabel('X1'); plt.ylabel('X2'); 
+    plt.title('Principal Components')
+
+    ###################################
+    # Figure 2
+    ###################################
+    n1 = 19
+    n2 = 11
+    p1 = mu + Z[n1, 0] * pc[0, :] 
+    p2 = mu + Z[n2, 0] * pc[0, :]
+    q1 = p1 + Z[n1, 1] * pc[1, :] 
+    q2 = p2 + Z[n2, 1] * pc[1, :]
+
+    plt.subplot(1, 3, 2)
+    plt.scatter(X[:,0], X[:,1], c='grey')
+    plt.arrow(mu[0], mu[1], pc[0,0], pc[0,1], width=0.12, facecolor=c1, zorder=8)
+    plt.arrow(mu[0], mu[1], pc[1,0], pc[1,1], width=0.12, facecolor=c2, zorder=8)
+
+    plt.plot([mu[0], p1[0]], [mu[1], p1[1]], linewidth=2, color=c1, linestyle='-')
+    plt.plot([mu[0], p2[0]], [mu[1], p2[1]], linewidth=2, color=c1, linestyle='-')
+    plt.plot([p1[0], q1[0]], [p1[1], q1[1]], linewidth=2, color=c2, linestyle='-')
+    plt.plot([p2[0], q2[0]], [p2[1], q2[1]], linewidth=2, color=c2, linestyle='-')
+
+    plt.scatter(mu[0], mu[1], c=c3, edgecolor='k', s=90, zorder=10)
+    plt.scatter(X[n1, 0], X[n1, 1], c=c4, edgecolor='k', s=90, zorder=10)
+    plt.scatter(X[n2, 0], X[n2, 1], c=c5, edgecolor='k', s=90, zorder=10)
+    plt.gca().set_aspect('equal')
+    plt.xlim([-4,4])
+    plt.ylim([-4,4])
+    plt.xlabel('X1'); plt.ylabel('X2'); 
+    plt.title('Principal Component Decomposition')
+
+    ###################################
+    # Figure 3
+    ###################################
+    plt.subplot(1, 3, 3)
+    plt.scatter(Z[:,0], Z[:,1], c='grey')
+
+    plt.arrow(0, 0, 1, 0, width=0.12, facecolor=c1, zorder=8)
+    plt.arrow(0, 0, 0, 1, width=0.12, facecolor=c2, zorder=8)
+
+    plt.plot([0, Z[n1, 0]], [0, 0], linewidth=2, color=c1, linestyle='-')
+    plt.plot([0, Z[n2, 0]], [0, 0], linewidth=2, color=c1, linestyle='-')
+
+    plt.plot([Z[n1, 0], Z[n1, 0]], [0, Z[n1, 1]], linewidth=2, color=c2, linestyle='-')
+    plt.plot([Z[n2, 0], Z[n2, 0]], [0, Z[n2, 1]], linewidth=2, color=c2, linestyle='-')
+
+
+    plt.scatter(0, 0, c=c3, edgecolor='k', s=90, zorder=10)
+    plt.scatter(Z[n1, 0], Z[n1, 1], c=c4, edgecolor='k', s=90, zorder=10)
+    plt.scatter(Z[n2, 0], Z[n2, 1], c=c5, edgecolor='k', s=90, zorder=10)
+    plt.gca().set_aspect('equal')
+    plt.xlim([-4,4])
+    plt.ylim([-4,4])
+    plt.xlabel('Z1'); plt.ylabel('Z2'); 
+    plt.title('Transformed Coordinates')
+
+    plt.show()
