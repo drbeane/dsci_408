@@ -786,7 +786,7 @@ def snippet_15(fs=[15,5]):
 
     plt.show()
     
-def snippet_16(digit, n_frames=150):
+def snippet_16(digit, pca, Z, n_frames=150):
     from IPython.display import Image
     import imageio
     import os
