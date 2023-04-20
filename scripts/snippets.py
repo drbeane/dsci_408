@@ -862,12 +862,12 @@ def snippet_16(digit, pca, Z, n_frames=150):
 
     display(Image(data=open('example.gif','rb').read(), format='png'))
     
-def snippet_17():
+def snippet_17(fs=[9,3]):
     x = np.linspace(-10,10,100)
     y1 = 1 / (1 + np.exp(-x))
     y2 = np.where(x<0, 0, x)
 
-    plt.figure(figsize=[12,4])
+    plt.figure(figsize=fs)
     plt.subplot(1,2,1)
     plt.plot([-10,10],[1,1], linestyle=':', c="r")
     plt.plot([-10,10],[0,0], linestyle=':', c="r")
