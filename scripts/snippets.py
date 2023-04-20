@@ -21,9 +21,10 @@ from sklearn.cluster import KMeans
 from sklearn.datasets import make_blobs
 
 
+
 def plot_regions(
-    model, X, y, num_ticks=100, cmap='rainbow', colors=None, fig_size=None, legend=True, 
-    display=True, path=None, keras=False):
+    model, X, y, num_ticks=100, cmap='rainbow', colors=None, alpha=1,
+    fig_size=None, legend=True, display=True, path=None, keras=False):
 
     import matplotlib.colors as mplc
     from matplotlib.colors import LinearSegmentedColormap
@@ -32,6 +33,11 @@ def plot_regions(
     X = np.array(X)
     y = np.array(y)
     
+    # Set color defaults for binary classificaiton
+    if colors is None and len(np.unique(y)) == 2:
+        colors=['salmon', 'cornflowerblue']
+
+
     # Check to see if there are exactly 2 features
     if X.shape[1] != 2:
         raise Exception('Training set must contain exactly two features.')
@@ -59,7 +65,11 @@ def plot_regions(
     
     # Feed grid points to model to generate 1D array of classes
     if(keras==True): 
-        class_pts = model.predict_classes(grid_pts)
+        prob = model.predict(grid_pts, verbose=0)
+        if prob.shape[1] == 1:
+            class_pts = np.where(prob < 0.5, 0, 1)
+        else: 
+            class_pts = np.argmax(prob, axis=1)
         class_pts = class_pts.reshape((len(class_pts),))
     else:
         class_pts = model.predict(grid_pts)
@@ -105,8 +115,10 @@ def plot_regions(
         sel = y == classes[i]       
         
         my_c = mplc.rgb2hex(my_cmap(cuts[i]))
-        plt.scatter(X[sel,0],X[sel,1], c=my_c, edgecolor='k', 
-                    zorder=10, label=classes[i])
+        plt.scatter(
+            X[sel,0],X[sel,1], c=my_c, edgecolor='k', 
+            alpha=alpha, zorder=10, label=classes[i]
+        )
 
     plt.xlim([x0, x1])
     plt.ylim([y0, y1])
@@ -120,6 +132,41 @@ def plot_regions(
     if(display): 
         plt.show()
 
+def vis_training(hlist, start=1, fs=[12,4]):
+
+    # Merge history objects    
+    history = {}
+    for k in hlist[0].history.keys():
+        history[k] = sum([h.history[k] for h in hlist], [])
+
+    # Determine epoch range to display
+    epoch_range = range(start, len(history['loss'])+1)
+    s = slice(start-1, None)
+
+    # Determine if validation data is included
+    validation = list(history.keys())[-1][:3] == 'val'
+
+    # Determine number of plots
+    n = len(history.keys()) 
+    if validation: 
+        n = n//2
+    
+    plt.figure(figsize=fs)
+
+    for i in range(n):
+        k = list(history.keys())[i]
+        plt.subplot(1,n,i+1)
+        plt.plot(epoch_range, history[k][s], label='Training')
+        if validation:
+            plt.plot(epoch_range, history['val_' + k][s], label='Validation')
+        
+        k = k.upper() if k in ['auc'] else k.title()
+        plt.xlabel('Epoch'); plt.ylabel(k); plt.title(k + ' by Epoch')
+        plt.grid()
+        plt.legend()
+
+    plt.tight_layout()
+    plt.show()
 
 def snippet_01(fs=[12,8]):
     # Generate Data 
@@ -814,3 +861,23 @@ def snippet_16(digit, pca, Z, n_frames=150):
     imageio.mimsave('./example.gif', frames, fps = 20)       
 
     display(Image(data=open('example.gif','rb').read(), format='png'))
+    
+def snippet_17():
+    x = np.linspace(-10,10,100)
+    y1 = 1 / (1 + np.exp(-x))
+    y2 = np.where(x<0, 0, x)
+
+    plt.figure(figsize=[12,4])
+    plt.subplot(1,2,1)
+    plt.plot([-10,10],[1,1], linestyle=':', c="r")
+    plt.plot([-10,10],[0,0], linestyle=':', c="r")
+    plt.plot([0,0],[0,1], linewidth=1, c="dimgray")
+    plt.title('Sigmoid Activation Function')
+    plt.plot(x, y1, linewidth=2)
+
+    plt.subplot(1,2,2)
+    plt.plot([0,0],[0,10], linewidth=1, c="dimgray")
+    plt.plot([-10,10],[0,0], linewidth=1, c="dimgray")
+    plt.plot(x, y2, linewidth=2)
+    plt.title('ReLu Activation Function')
+    plt.show()
