@@ -773,7 +773,8 @@ def snippet_15(fs=[15,5]):
     plt.arrow(mu[0], mu[1], pc[1,0], pc[1,1], width=0.12, length_includes_head=True, facecolor=c2)
     plt.scatter(mu[0], mu[1], c=c3, edgecolor='k', s=90, marker='o')
     plt.gca().set_aspect('equal')
-    plt.xlim([-4,4]); plt.ylim([-4,4])
+    plt.xlim([0,8])
+    plt.ylim([0,8])
     plt.xlabel('X1'); plt.ylabel('X2'); 
     plt.title('Principal Components')
 
@@ -801,8 +802,8 @@ def snippet_15(fs=[15,5]):
     plt.scatter(X[n1, 0], X[n1, 1], c=c4, edgecolor='k', s=90, zorder=10)
     plt.scatter(X[n2, 0], X[n2, 1], c=c5, edgecolor='k', s=90, zorder=10)
     plt.gca().set_aspect('equal')
-    plt.xlim([-4,4])
-    plt.ylim([-4,4])
+    plt.xlim([0,8])
+    plt.ylim([0,8])
     plt.xlabel('X1'); plt.ylabel('X2'); 
     plt.title('Principal Component Decomposition')
 
