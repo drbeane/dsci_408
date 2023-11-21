@@ -743,7 +743,7 @@ def snippet_15(fs=[15,5]):
     n = 50
     v0 = np.random.normal(0, 1.2, [n,1])
     v1 = np.random.normal(0, 0.6, [n,1])
-    X = np.hstack([v0 + v1, 0.8*v0 - v1])
+    X = np.hstack([v0 + v1 + 4, 0.8*v0 - v1 + 4])
 
     pca = PCA(n_components=2)
     Z = pca.fit_transform(X)
