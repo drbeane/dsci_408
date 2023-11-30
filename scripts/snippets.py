@@ -5,10 +5,11 @@ import matplotlib.colors as mplc
 from matplotlib.colors import ListedColormap
 from matplotlib.colors import LinearSegmentedColormap
 
+
 from scipy.optimize import minimize
 import warnings 
 
-#from ipywidgets import *
+from ipywidgets import *
 from IPython.display import display, HTML, Markdown
 
 from sklearn.linear_model import LinearRegression, LogisticRegression
