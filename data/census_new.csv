@@ -1,0 +1,11 @@
+age,workclass,fnlwgt,education,educ_num,marital_status,occupation,relationship,race,sex,capital_gain,capital_loss,hrs_per_week,native_country
+33,Private,229466,Bachelors,9,Married-civ-spouse,,Not-in-family,White,Male,0,0,40.0,United-States
+48,Private,366324,5th-6th,3,Married-spouse-absent,Handlers-cleaners,Not-in-family,White,Male,0,0,,United-States
+24,Self-emp-not-inc,312017,HS-grad,10,Divorced,Handlers-cleaners,Not-in-family,Black,Male,3464,0,60.0,United-States
+24,Private,160634,Assoc-voc,13,Widowed,Sales,Husband,White,Female,0,0,50.0,United-States
+62,Private,125457,Some-college,13,Married-civ-spouse,Handlers-cleaners,Husband,White,Male,0,0,45.0,United-States
+31,Private,153183,Bachelors,6,Married-civ-spouse,Prof-specialty,Husband,White,Male,0,0,70.0,United-States
+36,Self-emp-not-inc,102308,Assoc-voc,10,Never-married,Machine-op-inspct,Husband,White,Male,8614,1977,40.0,United-States
+42,Local-gov,397317,Bachelors,7,Never-married,Adm-clerical,Not-in-family,White,Female,0,0,40.0,United-States
+25,Private,289886,Bachelors,11,Divorced,Adm-clerical,Husband,White,Male,0,0,40.0,United-States
+22,,386378,11th,9,Never-married,,Husband,White,Female,0,0,40.0,United-States
