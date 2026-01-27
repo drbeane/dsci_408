@@ -5,11 +5,10 @@ import matplotlib.colors as mplc
 from matplotlib.colors import ListedColormap
 from matplotlib.colors import LinearSegmentedColormap
 
-
 from scipy.optimize import minimize
 import warnings 
 
-from ipywidgets import *
+#from ipywidgets import *
 from IPython.display import display, HTML, Markdown
 
 from sklearn.linear_model import LinearRegression, LogisticRegression
@@ -524,7 +523,7 @@ def snippet_08(title, b):
         p = 1 / (1 + np.exp(-z))
         df['p'] = p.round(3)
         df['pi'] = np.where(df.y == 'P', p, 1 - p).round(3)
-        lik = np.product(df.pi.values)
+        lik = np.prod(df.pi.values)
 
         display(df)        
         display(Markdown(f'**Likelihood = {100*lik:.2f}%**'))
@@ -744,7 +743,7 @@ def snippet_15(fs=[15,5]):
     n = 50
     v0 = np.random.normal(0, 1.2, [n,1])
     v1 = np.random.normal(0, 0.6, [n,1])
-    X = np.hstack([v0 + v1 + 4, 0.8*v0 - v1 + 4])
+    X = np.hstack([v0 + v1, 0.8*v0 - v1])
 
     pca = PCA(n_components=2)
     Z = pca.fit_transform(X)
@@ -774,8 +773,7 @@ def snippet_15(fs=[15,5]):
     plt.arrow(mu[0], mu[1], pc[1,0], pc[1,1], width=0.12, length_includes_head=True, facecolor=c2)
     plt.scatter(mu[0], mu[1], c=c3, edgecolor='k', s=90, marker='o')
     plt.gca().set_aspect('equal')
-    plt.xlim([0,8])
-    plt.ylim([0,8])
+    plt.xlim([-4,4]); plt.ylim([-4,4])
     plt.xlabel('X1'); plt.ylabel('X2'); 
     plt.title('Principal Components')
 
@@ -803,8 +801,8 @@ def snippet_15(fs=[15,5]):
     plt.scatter(X[n1, 0], X[n1, 1], c=c4, edgecolor='k', s=90, zorder=10)
     plt.scatter(X[n2, 0], X[n2, 1], c=c5, edgecolor='k', s=90, zorder=10)
     plt.gca().set_aspect('equal')
-    plt.xlim([0,8])
-    plt.ylim([0,8])
+    plt.xlim([-4,4])
+    plt.ylim([-4,4])
     plt.xlabel('X1'); plt.ylabel('X2'); 
     plt.title('Principal Component Decomposition')
 
@@ -883,3 +881,6 @@ def snippet_17(fs=[9,3]):
     plt.plot(x, y2, linewidth=2)
     plt.title('ReLu Activation Function')
     plt.show()
+
+if __name__ == "__main__":
+    snippet_08('Model 1', b=[-2.4, 0.016, 0.1])
