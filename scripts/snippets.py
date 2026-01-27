@@ -8,8 +8,7 @@ from matplotlib.colors import LinearSegmentedColormap
 from scipy.optimize import minimize
 import warnings 
 
-#from ipywidgets import *
-from ipywidgets import FloatSlider
+from ipywidgets import *
 from IPython.display import display, HTML, Markdown
 
 from sklearn.linear_model import LinearRegression, LogisticRegression
@@ -886,3 +885,4 @@ def snippet_17(fs=[9,3]):
 if __name__ == "__main__":
 
     snippet_08('Model 1', b=[-2.4, 0.016, 0.1])
+
