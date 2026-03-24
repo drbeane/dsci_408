@@ -21,6 +21,60 @@ from sklearn.cluster import KMeans
 from sklearn.datasets import make_blobs
 
 
+def grid_plot(grid):
+    summary_df = pd.DataFrame(grid.cv_results_['params'])
+    summary_df['cv_score'] = grid.cv_results_['mean_test_score']
+
+    num_params = len(grid.cv_results_['params'][0])
+
+    for model_type in ['KNeighborsClassifier', 'DecisionTreeClassifier', 'RandomForestClassifier']:
+        if model_type in str(type(grid.estimator[1])):
+            break
+
+    if num_params == 1:
+        # Get param name
+        param = list(grid.cv_results_['params'][0].keys())[0]
+        param_short = param.split('__')[-1]
+
+        plt.plot(summary_df[param], summary_df.cv_score)
+
+        plt.title(f'Grid Search Results for {model_type}')
+        plt.xlabel(param_short)
+        plt.ylabel('CV Score')
+        plt.xticks(summary_df[param])
+        plt.grid()
+        plt.show()
+
+    else:
+        # Get param names
+        param_1 = list(grid.cv_results_['params'][0].keys())[0]
+        param_1_short = param_1.split('__')[-1]
+        param_2 = list(grid.cv_results_['params'][0].keys())[1]
+        param_2_short = param_2.split('__')[-1]
+
+        # Swap names, if needed
+        if param_2_short == 'maX_depth':
+            temp = param_1; param_1 = param_2; param_2 = temp
+            temp = param_1_short; param_1_short = param_2_short; param_2_short = temp
+
+        # Get unique param values
+        unique_1 = summary_df[param_1].unique()
+        unique_2 = summary_df[param_2].unique()
+
+        #display(summary_df)
+
+        for value in unique_2:
+            temp = summary_df.query(f'{param_2} == {value}')
+            plt.plot(temp[param_1], temp.cv_score, label=value)
+
+        plt.title(f'Grid Search Results for {model_type}')
+        plt.xlabel(param_1_short)
+        plt.ylabel('CV Score')
+        plt.legend(title=param_2_short, bbox_to_anchor=[1,1])
+        plt.xticks(unique_1)
+        plt.grid()
+        plt.show()
+
 
 def plot_regions(
     model, X, y, num_ticks=100, cmap='rainbow', colors=None, alpha=1,
