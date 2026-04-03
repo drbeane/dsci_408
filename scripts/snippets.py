@@ -21,7 +21,7 @@ from sklearn.cluster import KMeans
 from sklearn.datasets import make_blobs
 
 
-def grid_plot(grid):
+def grid_plot(grid, log=False):
     summary_df = pd.DataFrame(grid.cv_results_['params'])
     summary_df['cv_score'] = grid.cv_results_['mean_test_score']
 
@@ -43,6 +43,8 @@ def grid_plot(grid):
         plt.ylabel('CV Score')
         plt.xticks(summary_df[param])
         plt.grid()
+        if log: 
+            plt.xscale('log')
         plt.show()
 
     else:
@@ -73,6 +75,8 @@ def grid_plot(grid):
         plt.legend(title=param_2_short, bbox_to_anchor=[1,1])
         plt.xticks(unique_1)
         plt.grid()
+        if log: 
+            plt.xscale('log')
         plt.show()
 
 
