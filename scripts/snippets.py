@@ -27,7 +27,7 @@ def grid_plot(grid, log=False):
 
     num_params = len(grid.cv_results_['params'][0])
 
-    for model_type in ['KNeighborsClassifier', 'DecisionTreeClassifier', 'RandomForestClassifier']:
+    for model_type in ['KNeighborsClassifier', 'DecisionTreeClassifier', 'RandomForestClassifier', 'Lasso', 'Ridge', 'Model_Type_Unknown']:
         if model_type in str(type(grid.estimator[1])):
             break
 
