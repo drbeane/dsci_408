@@ -365,7 +365,7 @@ def snippet_02(fs=[12,8]):
             plt.scatter(x1, x2, c=y, edgecolor='k', cmap=cm0)
             plt.title(f'{titles[i]}')
         else:
-            plot_regions(models[i-1], X, y, num_ticks=nticks, cmap=cm0, close=False, legend=False, display=False)
+            plot_regions(models[i-1], X, y, num_ticks=nticks, cmap=cm0, legend=False, display=False)
             plt.title(f'{titles[i]}\nAccuracy: {acc[i-1]:.4f}')
         #plt.xlim([0,10])
         #plt.ylim([0,10])
